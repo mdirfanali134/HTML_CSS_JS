@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VeggieMart - Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background: url('images/bc_login.gif') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    .card img {
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+    }
+    .search-bar {
+      max-width: 400px;
+    }
+    .icon-btn {
+      font-size: 24px;
+      cursor: pointer;
+      margin-left: 15px;
+    }
+    .badge-cart {
+      background: red;
+      color: white;
+      font-size: 12px;
+      position: absolute;
+      top: 8px;
+      right: 0;
+      padding: 2px 6px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg px-4">
+  <a class="navbar-brand fw-bold" href="home.html">VeggieMart</a>
+  <div class="ms-auto d-flex align-items-center">
+    <input type="text" class="form-control search-bar me-2" id="searchInput" placeholder="Search vegetables..." onkeyup="filterItems()" />
+    <div class="position-relative" onclick="goToCart()">
+      <span class="icon-btn">🛒</span>
+      <span class="badge-cart" id="cartCount">0</span>
+    </div>
+    <span class="icon-btn" onclick="goToUser()">👤</span>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <div class="row" id="veggieContainer">
+    <!-- Veggie cards injected by JS -->
+  </div>
+</div>
+
+<script>
+  const vegetables = [
+    "Tomato", "Carrot", "Potato", "Onion", "Spinach", "Capsicum", "Cucumber",
+    "Broccoli", "Cauliflower", "Pumpkin", "Beetroot", "Radish", "Green Beans",
+    "Brinjal", "Zucchini", "Peas", "Corn", "Chili", "Garlic", "Ginger",
+    "Bottle Gourd", "Cabbage", "Sweet Potato", "Okra", "Turnip", "Mushroom",
+    "Mint", "Coriander", "Lettuce", "Parsley", "Red Bell Pepper", "Green Peas",
+    "Yam", "Spring Onion", "Bitter Gourd", "Drumstick", "Tinda", "Snake Gourd"
+  ];
+
+  const container = document.getElementById("veggieContainer");
+
+  function loadVeggies() {
+    container.innerHTML = "";
+    vegetables.forEach(veg => {
+      const card = document.createElement("div");
+      card.className = "col-md-3 mb-4 veg-card";
+      card.innerHTML = `
+        <div class="card h-100">
+          <img src="images/${veg.toLowerCase().replace(/\s+/g, '')}.jpg" class="card-img-top" alt="${veg}" />
+          <div class="card-body text-center">
+            <h5 class="card-title">${veg}</h5>
+            <p class="card-text">Fresh and organic ${veg.toLowerCase()} just for you!</p>
+            <button class="btn btn-success" onclick="addToCart('${veg}')">Add to Cart</button>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+    updateCartCount();
+  }
+
+  function filterItems() {
+    const query = document.getElementById("searchInput").value.toLowerCase();
+    const cards = document.querySelectorAll(".veg-card");
+    vegetables.forEach((veg, index) => {
+      const show = veg.toLowerCase().includes(query);
+      cards[index].style.display = show ? "block" : "none";
+    });
+  }
+
+  function addToCart(item) {
+    const currentItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    currentItems.push(item);
+    localStorage.setItem("cartItems", JSON.stringify(currentItems));
+    updateCartCount();
+  }
+
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+    document.getElementById("cartCount").textContent = cart.length;
+  }
+
+  function goToCart() {
+    window.location.href = "cart.html";
+  }
+
+  function goToUser() {
+    window.location.href = "user.html";
+  }
+
+  loadVeggies();
+</script>
+
+</body>
+</html>

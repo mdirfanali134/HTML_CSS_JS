@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment - VeggieMart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url('./images/bc_login.gif') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .payment-container {
+      max-width: 700px;
+      margin: 60px auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .title {
+      font-weight: bold;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2d572c;
+    }
+
+    .form-label {
+      font-weight: 500;
+    }
+
+    .assurance {
+      font-size: 14px;
+      color: green;
+      text-align: center;
+      margin: 20px 0 10px;
+    }
+
+    .payment-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .payment-card {
+      flex: 1 1 calc(50% - 10px);
+      background-color: #f1f1f1;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .payment-card:hover {
+      background-color: #d9f2dc;
+    }
+
+    .payment-card input[type="radio"] {
+      display: none;
+    }
+
+    .payment-card.selected {
+      border-color: #28a745;
+      background-color: #d1f7d1;
+    }
+
+    .btn-primary {
+      background-color: #28a745;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+<div class="payment-container">
+  <div class="title">Payment Details</div>
+  
+  <div class="mb-3">
+    <label class="form-label">Net Payable:</label>
+    <h5>₹<span id="totalAmount">0</span></h5>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Mobile Number:</label>
+    <input type="text" class="form-control" id="mobile" readonly>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Delivery Address:</label>
+    <textarea class="form-control" id="address" rows="3" readonly></textarea>
+  </div>
+
+  <div class="mb-2">
+    <label class="form-label">Select Payment Method:</label>
+    <div class="payment-options" id="paymentOptions">
+      <label class="payment-card">
+        <input type="radio" name="payment" value="UPI">
+        <div>📱 UPI</div>
+      </label>
+      <label class="payment-card">
+        <input type="radio" name="payment" value="Credit Card">
+        <div>💳 Credit Card</div>
+      </label>
+      <label class="payment-card">
+        <input type="radio" name="payment" value="Debit Card">
+        <div>💳 Debit Card</div>
+      </label>
+      <label class="payment-card">
+        <input type="radio" name="payment" value="Cash on Delivery">
+        <div>🚚 Cash on Delivery</div>
+      </label>
+    </div>
+  </div>
+
+  <div class="assurance">
+    ✅ 100% secure payment. Order will be delivered in 24 hours.
+  </div>
+
+  <div class="d-grid">
+    <button class="btn btn-primary" onclick="placeOrder()">Place Order</button>
+  </div>
+</div>
+
+<script>
+  // Dummy pre-filled user data (should ideally come from signup/login)
+  const userData = {
+    mobile: "1234567890",
+    address: "London, UK 12347754"
+  };
+
+  document.getElementById("mobile").value = userData.mobile;
+  document.getElementById("address").value = userData.address;
+
+  // Load total from localStorage
+  function getTotalAmount() {
+    const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+    const prices = {
+      "Tomato": 20, "Carrot": 25, "Potato": 15, "Onion": 30, "Spinach": 10,
+      "Capsicum": 28, "Cucumber": 18, "Broccoli": 35, "Cauliflower": 22, "Pumpkin": 16,
+      "Beetroot": 24, "Radish": 12, "Green Beans": 26, "Brinjal": 27, "Zucchini": 31,
+      "Peas": 21, "Corn": 19, "Chili": 14, "Garlic": 34, "Ginger": 33,
+      "Bottle Gourd": 15, "Cabbage": 20, "Sweet Potato": 29, "Okra": 25,
+      "Turnip": 16, "Mushroom": 40, "Mint": 10, "Coriander": 8, "Lettuce": 22, "Parsley": 30
+    };
+    let total = 0;
+    cart.forEach(item => {
+      total += prices[item] || 20;
+    });
+    document.getElementById("totalAmount").textContent = total;
+  }
+
+  // Payment card toggle styling
+  document.querySelectorAll(".payment-card").forEach(card => {
+    card.addEventListener("click", () => {
+      document.querySelectorAll(".payment-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      card.querySelector("input[type='radio']").checked = true;
+    });
+  });
+
+  function placeOrder() {
+    const selectedPayment = document.querySelector("input[name='payment']:checked");
+    if (!selectedPayment) {
+      alert("❌ Please select a payment method.");
+      return;
+    }
+
+    alert("🎉 Order placed successfully using " + selectedPayment.value + "!");
+    localStorage.removeItem("cartItems");
+    window.location.href = "home.html";
+  }
+
+  getTotalAmount();
+</script>
+
+</body>
+</html>
